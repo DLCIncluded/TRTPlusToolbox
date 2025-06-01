@@ -1,4 +1,6 @@
-import './assets/main.css'
+import './assets/main.scss'
+import 'bulma/bulma.scss' 
+import 'material-symbols/outlined.css'
 
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
