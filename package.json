@@ -1,5 +1,6 @@
 {
-  "name": "trtplanner",
+  "name": "trtplusstoolbox",
+  "description": "A Vue 3 application for TRT+ Toolbox",
   "version": "0.0.0",
   "private": true,
   "type": "module",
