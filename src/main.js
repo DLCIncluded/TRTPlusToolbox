@@ -1,5 +1,5 @@
 import './assets/main.scss'
-import 'bulma/bulma.scss' 
+// import 'bulma/bulma.scss' 
 import 'material-symbols/outlined.css'
 
 import { createApp } from 'vue'

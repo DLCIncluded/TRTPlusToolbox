@@ -17,23 +17,20 @@ export default {
       required: true
     },
     size: {
-      type: Number,
       default: 24
     },
     fill: {
-      type: Number,
       default: 0
     },
     weight: {
-      type: Number,
       default: 400
     }
   },
   computed: {
     iconStyle() {
       return {
-        'font-variation-settings': `'FILL' ${this.fill}, 'wght' ${this.weight}, 'GRAD' 0, 'opsz' ${this.size}`,
-        'font-size': `${this.size}px`
+        'font-variation-settings': `'FILL' ${Number(this.fill)}, 'wght' ${Number(this.weight)}, 'GRAD' 0, 'opsz' ${Number(this.size)}`,
+        'font-size': `${Number(this.size)}px`
       }
     }
   }

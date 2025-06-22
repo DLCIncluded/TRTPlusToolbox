@@ -1,0 +1,28 @@
+$purple: #00ff2a;
+$brown: #757763;
+
+@use "../../node_modules/bulma/sass/" as bulma with (
+	$family-primary: '"Nunito", sans-serif',
+	$grey-dark: $brown,
+	$primary: $purple,
+	$control-border-width: 2px,
+	$input-shadow: none
+);
+
+// :root {
+// 	$card-shadow: 0 2px 4px rgb(255, 0, 0);
+// }
+
+
+
+.rotated {
+	transform: rotate(90deg);
+}
+
+.mui-icon {
+	transition: transform 0.3s ease;
+}
+
+.no-cursor {
+	cursor: default !important;
+}
