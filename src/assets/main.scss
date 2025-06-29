@@ -1,10 +1,6 @@
-$purple: #00ff2a;
-$brown: #757763;
-
 @use "../../node_modules/bulma/sass/" as bulma with (
 	$family-primary: '"Nunito", sans-serif',
-	$grey-dark: $brown,
-	$primary: $purple,
+	$primary: rgb(66, 88, 255),
 	$control-border-width: 2px,
 	$input-shadow: none
 );
@@ -25,4 +21,17 @@ $brown: #757763;
 
 .no-cursor {
 	cursor: default !important;
+}
+
+/* example scoped class */
+.no-spinner::-webkit-outer-spin-button,
+.no-spinner::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.no-spinner {
+  -webkit-appearance: textfield;
+  -moz-appearance: textfield;
+  appearance: textfield;
 }

@@ -1,36 +1,50 @@
 <template>
 	<div>
-		<h1 class="title">Welcome to the TRT+ Toolbox</h1>
-		<p>A collection of tools to help with your TRT+ protocol.</p>
-		<p>Please make sure to create an account and login to see everything.</p>
-
-
+		<h1 class="title has-text-centered">TRT+ Toolbox</h1>
 	</div>
-
-	<div class="card has-background-black-ter">
-		<header class="card-header">
-			<p class="card-header-title">Component</p>
-			<span class="card-header-icon no-cursor" aria-label="more options">
-				<span class="icon">
-					<MUI name="more_vert" class="mui-icon" size=24 fill=0 weight=400></MUI>
-				</span>
+	<article class="panel is-primary">
+		<p class="panel-heading">Primary</p>
+		<p class="panel-tabs">
+			<a class="is-active">All</a>
+			<a>Public</a>
+			<a>Private</a>
+			<a>Sources</a>
+			<a>Forks</a>
+		</p>
+		<div class="panel-block">
+			<p class="control has-icons-left">
+			<input class="input is-primary" type="text" placeholder="Search" />
+			<span class="icon is-left">
+				<i class="fas fa-search" aria-hidden="true"></i>
 			</span>
-		</header>
-		<div class="card-content">
-			<div class="content">
-				Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus nec
-				iaculis mauris.
-				<a href="#">@bulmaio</a>. <a href="#">#css</a> <a href="#">#responsive</a>
-				<br />
-				<time datetime="2016-1-1">11:09 PM - 1 Jan 2016</time>
-			</div>
+			</p>
 		</div>
-		<footer class="card-footer">
-			<a href="#" class="card-footer-item">Save</a>
-			<a href="#" class="card-footer-item">Edit</a>
-			<a href="#" class="card-footer-item">Delete</a>
-		</footer>
-	</div>
+		<a class="panel-block is-active">
+			<span class="panel-icon">
+			<i class="fas fa-book" aria-hidden="true"></i>
+			</span>
+			bulma
+		</a>
+		<a class="panel-block">
+			<span class="panel-icon">
+			<i class="fas fa-book" aria-hidden="true"></i>
+			</span>
+			marksheet
+		</a>
+		<a class="panel-block">
+			<span class="panel-icon">
+			<i class="fas fa-book" aria-hidden="true"></i>
+			</span>
+			minireset.css
+		</a>
+		<a class="panel-block">
+			<span class="panel-icon">
+			<i class="fas fa-book" aria-hidden="true"></i>
+			</span>
+			jgthms.github.io
+		</a>
+		</article>
+
 </template>
 
 <script>

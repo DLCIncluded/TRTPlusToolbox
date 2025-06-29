@@ -8,7 +8,7 @@
 	
 	<main class="container mt-6 p-3">
 
-		<NavBar @toggle-nav="showNav = !showNav" :show-nav="showNav" />
+		<NavBar />
 
 		<div class="content is-widescreen">
 			<RouterView />
@@ -20,6 +20,8 @@
 <script>
 import MUI from '@/components/icons/MUI.vue'
 import NavBar from '@/components/NavBar.vue'
+
+
 export default {
     name: 'TRTPlusToolbox',
     components: {
@@ -31,6 +33,7 @@ export default {
                 
             }
     },
+	
     methods: {
     }
 }

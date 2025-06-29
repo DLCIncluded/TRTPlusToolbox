@@ -12,11 +12,17 @@
 	
 	<aside class="navbar pl-3 menu" :class="{'is-open': showNav}">
 		<div class="menu-content" :class="{'mobile-hidden': !showNav}">
+			<p class="menu-label mt-5">{{ userStore.welcomeMessage }}</p>
+			<ul class="menu-list">
+				<li v-if="!isLoggedIn"><RouterLink to="login" active-class="is-active">Login</RouterLink></li>
+				<li v-if="isLoggedIn"><RouterLink to="profile" active-class="is-active">Profile</RouterLink></li>
+				<li v-if="isLoggedIn"><RouterLink to="settings" active-class="is-active">Settings</RouterLink></li>
+				<li v-if="isLoggedIn"><RouterLink to="logout" active-class="is-active">Logout</RouterLink></li>
+			</ul>
 			<p class="menu-label mt-5">General</p>
 			<ul class="menu-list">
 				<li><RouterLink to="/" active-class="is-active">Home</RouterLink></li>
 				<li><RouterLink to="dashboard" active-class="is-active">Dashboard</RouterLink></li>
-				<li><RouterLink to="profile" active-class="is-active">Profile</RouterLink></li>
 			</ul>
 			<p class="menu-label">Planner</p>
 				<ul class="menu-list">
@@ -43,41 +49,44 @@
 				<li><RouterLink to="dosagecalc" active-class="is-active">Dosage Calculator</RouterLink></li>
 				<li><RouterLink to="vialcalc" active-class="is-active">Weekly Vial Calculator</RouterLink></li>
 			</ul>
-			<p class="menu-label">Account</p>
-			<ul class="menu-list">
-				<li><RouterLink to="settings" active-class="is-active">Settings</RouterLink></li>
-				<li><RouterLink to="login" active-class="is-active">Login</RouterLink></li>
-				<li><RouterLink to="logout" active-class="is-active">Logout</RouterLink></li>
-			</ul>
 		</div>
 	</aside>
 </template>
 
 <script>
+import { useUserStore } from '@/stores/user'
+import { mapStores } from 'pinia'
+
 export default {
-    name: 'NavBar',
-    data() {
-            return {
-                sections: {
-                    elements: false,
-                    components: true, // Start with components expanded
-                    form: false,
-                    layout: false,
-                   
-                },
-                showNav: false
-            }
-    },
-    methods: {
-        toggleSection(section) {
-            this.sections[section] = !this.sections[section]
-        },
-    },
+	name: 'NavBar',
+	data() {
+		return {
+			sections: {
+				elements: false,
+				components: true, // Start with components expanded
+				form: false,
+				layout: false,
+				
+			},
+			showNav: false
+		}
+	},
+	methods: {
+		toggleSection(section) {
+			this.sections[section] = !this.sections[section]
+		},
+	},
 	watch: {
-    $route() {
-      this.showNav = false;
-    }
-  }
+		$route() {
+		this.showNav = false;
+		},
+	},
+	computed: {
+		...mapStores(useUserStore),
+		isLoggedIn() {
+			return this.userStore.isLoggedIn;
+		}
+	},
 }
 </script>
 
