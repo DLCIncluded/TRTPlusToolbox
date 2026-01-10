@@ -1,23 +1,17 @@
 <template>
-	<div class="min-h-screen bg-gray-900 flex items-center justify-center">
-	  <div class="bg-gray-800 rounded-lg p-8 w-full max-w-md text-center">
-		<h2 class="text-white text-xl mb-4">Authenticating...</h2>
-		<div class="w-16 h-16 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto"></div>
-	  </div>
-	</div>
-  </template>
-  
-  <script>
-import authService from '../services/auth.service';
-import { mapStores } from 'pinia'
-import { useUserStore } from '@/stores/user'
-export default {
-	computed: {
-		...mapStores(useUserStore),
+  <div class="container">
+    <div class="notification is-warning">
+      <h2 class="title">Page Not Found</h2>
+      <p>This authentication callback is no longer used. Please use the new login system.</p>
+      <router-link to="/login" class="button is-primary">Go to Login</router-link>
+    </div>
+  </div>
+</template>
 
-		displayName() {
-		return this.userStore.discord?.global_name || this.userStore.discord?.username || 'Guest'
-		},
+<script>
+// DEPRECATED: Discord auth callback - no longer used
+export default {
+  name: 'AuthCallback',
 
 		avatarUrl() {
 		const { id, avatar } = this.userStore.discord || {}

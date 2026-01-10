@@ -1,5 +1,5 @@
 <template>
-
+	<div class="menu-overlay" :class="{'is-active': showNav}" @click="showNav = false"></div>
 	<!-- Mobile burger button -->
 	<div class="mobile-burger-container" :class="{'is-active': showNav}">
 		<a class="navbar-burger" role="button" aria-label="menu" aria-expanded="false" :class="{'is-active': showNav}" @click="showNav = !showNav">
@@ -12,50 +12,41 @@
 	
 	<aside class="navbar pl-3 menu" :class="{'is-open': showNav}">
 		<div class="menu-content" :class="{'mobile-hidden': !showNav}">
-			<p class="menu-label mt-5">{{ userStore.welcomeMessage }}</p>
+			<p class="menu-label mt-5">{{ welcomeMessage }}</p>
 			<ul class="menu-list">
-				<li v-if="!isLoggedIn"><RouterLink to="login" active-class="is-active">Login</RouterLink></li>
-				<li v-if="isLoggedIn"><RouterLink to="profile" active-class="is-active">Profile</RouterLink></li>
-				<li v-if="isLoggedIn"><RouterLink to="settings" active-class="is-active">Settings</RouterLink></li>
-				<li v-if="isLoggedIn"><RouterLink to="logout" active-class="is-active">Logout</RouterLink></li>
+				<li v-if="!isLoggedIn"><RouterLink to="/login" active-class="is-active">Login</RouterLink></li>
+				<li v-if="!isLoggedIn"><RouterLink to="/register" active-class="is-active">Register</RouterLink></li>
+				<li v-if="isLoggedIn"><RouterLink to="/profile" active-class="is-active">Profile</RouterLink></li>
+				<li v-if="isLoggedIn"><RouterLink to="/settings" active-class="is-active">Settings</RouterLink></li>
+				<li v-if="isLoggedIn"><RouterLink to="/logout" active-class="is-active">Logout</RouterLink></li>
 			</ul>
 			<p class="menu-label mt-5">General</p>
 			<ul class="menu-list">
 				<li><RouterLink to="/" active-class="is-active">Home</RouterLink></li>
-				<li><RouterLink to="dashboard" active-class="is-active">Dashboard</RouterLink></li>
+				<li v-if="isLoggedIn"><RouterLink to="/dashboard" active-class="is-active">Dashboard</RouterLink></li>
 			</ul>
 			<p class="menu-label">Planner</p>
-				<ul class="menu-list">
-				<!-- example of drop down menu:  -->
-				<!-- <li class="">
-					<a class="has-arrow is-flex is-align-items-center is-justify-content-space-between" @click="toggleSection('layout')">
-						<span>Manage Your Team</span>
-						<span class="icon is-small align-middle">
-							<MUI name="chevron_forward" class="mui-icon" :class="sections.layout ? 'rotated' : ''" size=24 fill=0 weight=400 style="padding-top:4px"></MUI>
-						</span>
-					</a>
-					<ul v-show="sections.layout">
-						<li><RouterLink to="members" active-class="is-active">Members</RouterLink></li>
-						<li><RouterLink to="plugins" active-class="is-active">Plugins</RouterLink></li>
-						<li><RouterLink to="add" active-class="is-active">Add a member</RouterLink></li>
-					</ul>
-				</li> -->
-				<li><RouterLink to="cycleplanner" active-class="is-active">Cycle Planner</RouterLink></li>
-				<li><RouterLink to="cyclecalendar" active-class="is-active">Cycle Calendar</RouterLink></li>
-				
+			<ul class="menu-list">
+				<li v-if="isLoggedIn"><RouterLink to="/inventory" active-class="is-active">Inventory</RouterLink></li>
+				<li v-if="isLoggedIn"><RouterLink to="/cycleplanner" active-class="is-active">Cycle Planner</RouterLink></li>
+				<li v-if="isLoggedIn"><RouterLink to="/cyclecalendar" active-class="is-active">Cycle Calendar</RouterLink></li>
 			</ul>
 			<p class="menu-label">Tools</p>
 			<ul class="menu-list">
-				<li><RouterLink to="dosagecalc" active-class="is-active">Dosage Calculator</RouterLink></li>
-				<li><RouterLink to="vialcalc" active-class="is-active">Weekly Vial Calculator</RouterLink></li>
+				<li><RouterLink to="/dosagecalc" active-class="is-active">Dosage Calculator</RouterLink></li>
+				<li><RouterLink to="/vialcalc" active-class="is-active">Weekly Vial Calculator</RouterLink></li>
+			</ul>
+			<p class="menu-label">Info</p>
+			<ul class="menu-list">
+				<li><RouterLink to="/about" active-class="is-active">About</RouterLink></li>
 			</ul>
 		</div>
 	</aside>
 </template>
 
 <script>
-import { useUserStore } from '@/stores/user'
-import { mapStores } from 'pinia'
+import { useAuthStore } from '@/stores/auth';
+import { mapStores } from 'pinia';
 
 export default {
 	name: 'NavBar',
@@ -63,10 +54,9 @@ export default {
 		return {
 			sections: {
 				elements: false,
-				components: true, // Start with components expanded
+				components: true,
 				form: false,
 				layout: false,
-				
 			},
 			showNav: false
 		}
@@ -78,13 +68,16 @@ export default {
 	},
 	watch: {
 		$route() {
-		this.showNav = false;
+			this.showNav = false;
 		},
 	},
 	computed: {
-		...mapStores(useUserStore),
+		...mapStores(useAuthStore),
 		isLoggedIn() {
-			return this.userStore.isLoggedIn;
+			return this.authStore.isAuthenticated;
+		},
+		welcomeMessage() {
+			return this.authStore.welcomeMessage;
 		}
 	},
 }

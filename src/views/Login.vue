@@ -1,34 +1,19 @@
 <template>
-	<div>
-		<h1 class="title has-text-centered">TRT+ Toolbox</h1>
-	</div>
-	<article class="panel is-primary">
-		<p class="panel-heading">Primary</p>
-		<div class="panel-block">
-			<button @click="loginWithDiscord" class="button is-primary">
-				Login with Discord
-			</button>
-		</div>
-	</article>
-
+  <div>
+    <!-- Redirect component - this file is deprecated -->
+    <LoginView />
+  </div>
 </template>
 
 <script>
-import authService from '../services/auth.service';
+// DEPRECATED: This file redirects to the new LoginView
+// This file can be removed after updating all references
+import LoginView from './LoginView.vue';
 
 export default {
-    name: 'HomeView',
-    components: {
-    },
-    data() {
-            return {
-               
-            }
-    },
-    methods: {
-		 loginWithDiscord() {
-			window.location.href = authService.getAuthUrl();
-		}
-    }
+  name: 'Login',
+  components: {
+    LoginView
+  }
 }
 </script>

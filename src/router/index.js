@@ -1,7 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import authService from '../services/auth.service';
+import { useAuthStore } from '@/stores/auth'
 import HomeView from '../views/HomeView.vue'
-import AuthCallback from '../views/AuthCallback.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -10,82 +9,103 @@ const router = createRouter({
       path: '/',
       name: 'home',
       component: HomeView,
-	  meta: { requiresAuth: true }
+      meta: { requiresAuth: false }
     },
-	{
-		path: '/login',
-		name: 'login',
-		component: () => import('../views/Login.vue'),
-	},
-	{
-		path: '/auth/callback',
-		name: 'AuthCallback',
-		component: AuthCallback,
-	},
-	{
-		path: '/logout',
-		name: 'logout',
-		beforeEnter: (to,from,next) => {
-			authService.logout();
-			next('/login')
-		}
-	},
-	{
-		path: '/profile',
-		name: 'profile',
-		component: () => import('../views/Profile.vue'),
-		meta: { requiresAuth: true }
-	},
-	{
-		path: '/dashboard',
-		name: 'dashboard',
-		component: () => import('../views/Profile.vue'),
-		meta: { requiresAuth: true }
-	},
-	{
-		path: '/cycleplanner',
-		name: 'cycleplanner',
-		component: () => import('../views/CyclePlanner.vue'),
-		meta: { requiresAuth: true }
-	},
-	{
-		path: '/cyclecalendar',
-		name: 'cyclecalendar',
-		component: () => import('../views/Profile.vue'),
-		meta: { requiresAuth: true }
-	},
-	{
-		path: '/dosagecalc',
-		name: 'dosagecalc',
-		component: () => import('../views/Profile.vue'),
-		meta: { requiresAuth: true }
-	},
-	{
-		path: '/vialcalc',
-		name: 'vialcalc',
-		component: () => import('../views/Profile.vue'),
-		meta: { requiresAuth: true }
-	},
-	{
-		path: '/settings',
-		name: 'settings',
-		component: () => import('../views/Profile.vue'),
-		meta: { requiresAuth: true }
-	},
+    {
+      path: '/login',
+      name: 'login',
+      component: () => import('../views/LoginView.vue'),
+      meta: { requiresAuth: false }
+    },
+    {
+      path: '/register',
+      name: 'register',
+      component: () => import('../views/RegisterView.vue'),
+      meta: { requiresAuth: false }
+    },
+    {
+      path: '/logout',
+      name: 'logout',
+      beforeEnter: async (to, from, next) => {
+        const authStore = useAuthStore();
+        await authStore.logout();
+        next('/login');
+      }
+    },
+    {
+      path: '/profile',
+      name: 'profile',
+      component: () => import('../views/Profile.vue'),
+      meta: { requiresAuth: true }
+    },
+    {
+      path: '/dashboard',
+      name: 'dashboard',
+      component: () => import('../views/Profile.vue'),
+      meta: { requiresAuth: true }
+    },
+    {
+      path: '/cycleplanner',
+      name: 'cycleplanner',
+      component: () => import('../views/CyclePlanner.vue'),
+      meta: { requiresAuth: true }
+    },
+    {
+      path: '/cyclecalendar',
+      name: 'cyclecalendar',
+      component: () => import('../views/CycleCalendarView.vue'),
+      meta: { requiresAuth: true }
+    },
+    {
+      path: '/dosagecalc',
+      name: 'dosagecalc',
+      component: () => import('../views/DosageCalcView.vue'),
+      meta: { requiresAuth: false }
+    },
+    {
+      path: '/vialcalc',
+      name: 'vialcalc',
+      component: () => import('../views/VialCalcView.vue'),
+      meta: { requiresAuth: false }
+    },
+    {
+      path: '/settings',
+      name: 'settings',
+      component: () => import('../views/Profile.vue'),
+      meta: { requiresAuth: true }
+    },
+    {
+      path: '/inventory',
+      name: 'inventory',
+      component: () => import('../views/InventoryView.vue'),
+      meta: { requiresAuth: true }
+    },
+    {
+      path: '/about',
+      name: 'about',
+      component: () => import('../views/AboutView.vue'),
+      meta: { requiresAuth: false }
+    },
   ],
 })
 
 // Navigation guard
 router.beforeEach((to, from, next) => {
-	if (to.matched.some(record => record.meta.requiresAuth)) {
-		if (!authService.isAuthenticated()) {
-			next({ name: 'login' });
-		} else {
-			next();
-		}
-	} else {
-		next();
-	}
+  if (to.matched.some(record => record.meta.requiresAuth)) {
+    const authStore = useAuthStore();
+    
+    if (!authStore.isAuthenticated) {
+      // Redirect to login with the intended destination
+      next({
+        name: 'login',
+        query: { redirect: to.fullPath }
+      });
+    } else {
+      next();
+    }
+  } else {
+    next();
+  }
 });
 
 export default router;
