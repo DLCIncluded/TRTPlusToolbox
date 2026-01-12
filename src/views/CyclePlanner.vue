@@ -638,7 +638,7 @@
 
 	
 
-	<article class="panel is-primary">
+	<article class="panel is-primary" v-if="currentEnv == 'development'">
 		<p class="panel-heading">Debugging</p>
 		<div class="panel-block">
 			<!-- <div class="field">
@@ -672,8 +672,10 @@ import { useCycleStore } from '@/stores/cycle'
 import { useToast } from "vue-toastification";
 const toast = useToast();
 import TooltipIcon from '@/components/TooltipIcon.vue'
+const currentEnv = import.meta.env.VITE_ENV || 'development';
+
 export default {
-	name: 'HomeView',
+	name: 'CyclePlanner',
 	components: {
 		MUI,
 		TooltipIcon
@@ -699,6 +701,7 @@ export default {
 				activeCompounds: [],
 				compoundData: {}
 			},
+			currentEnv,
 			selectedCycleId: null,
 			selectedCycleName: '',
 			cycles: [],
