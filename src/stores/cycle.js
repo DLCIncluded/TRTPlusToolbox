@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { cycleAPI } from '@/api';
+import axios from '@/axios';
 import { useToast } from 'vue-toastification';
 
 export const useCycleStore = defineStore('cycle', {
@@ -27,8 +27,11 @@ export const useCycleStore = defineStore('cycle', {
       this.error = null;
 
       try {
-        const response = await cycleAPI.getCycles();
-        this.cycles = response.cycles || [];
+        console.log('Loading cycles from API...');
+        const response = await axios.get('/api/cycles');
+        console.log('Cycles loaded:', response.data.cycles);
+        this.cycles = response.data.cycles || [];
+
         return { success: true };
       } catch (error) {
         this.error = error.response?.data?.error || 'Failed to load cycles';
@@ -50,18 +53,19 @@ export const useCycleStore = defineStore('cycle', {
       this.error = null;
 
       try {
-        const response = await cycleAPI.createCycle(cycleData);
-        
+        const response = await axios.post('/api/cycles', cycleData);
+
+        // console.log('Cycle creation response:', response);
+
+        const newCycleData = response.data.cycle;
+
         // Add the new cycle to the local store
-        this.cycles.unshift(response.cycle);
-        this.currentCycle = response.cycle;
+        this.cycles.unshift(newCycleData);
+        this.currentCycle = newCycleData;
         
-        const toast = useToast();
-        toast.success('Cycle saved successfully!');
-        
-        return { success: true, cycle: response.cycle };
+        return { success: true, cycle: newCycleData };
       } catch (error) {
-        this.error = error.response?.data?.error || 'Failed to create cycle';
+        this.error = error.response?.data?.error || 'Failed to create cycle (in store)';
         
         const toast = useToast();
         toast.error(this.error);
@@ -80,22 +84,22 @@ export const useCycleStore = defineStore('cycle', {
       this.error = null;
 
       try {
-        const response = await cycleAPI.updateCycle(cycleId, cycleData);
-        
+        const response = await axios.put(`/api/cycles/${cycleId}`, cycleData);
+
         // Update the cycle in the local store
         const index = this.cycles.findIndex(cycle => cycle.id === cycleId);
         if (index !== -1) {
-          this.cycles[index] = response.cycle;
+          this.cycles[index] = response.data.cycle;
         }
-        
+
         if (this.currentCycle?.id === cycleId) {
-          this.currentCycle = response.cycle;
+          this.currentCycle = response.data.cycle;
         }
         
         const toast = useToast();
         toast.success('Cycle updated successfully!');
         
-        return { success: true, cycle: response.cycle };
+        return { success: true, cycle: response.data.cycle };
       } catch (error) {
         this.error = error.response?.data?.error || 'Failed to update cycle';
         
@@ -116,7 +120,7 @@ export const useCycleStore = defineStore('cycle', {
       this.error = null;
 
       try {
-        await cycleAPI.deleteCycle(cycleId);
+        await axios.delete(`/api/cycles/${cycleId}`);
         
         // Remove the cycle from the local store
         this.cycles = this.cycles.filter(cycle => cycle.id !== cycleId);
@@ -149,15 +153,16 @@ export const useCycleStore = defineStore('cycle', {
       this.error = null;
 
       try {
-        const response = await cycleAPI.duplicateCycle(cycleId, newTitle);
-        
+        const payload = newTitle ? { title: newTitle } : {};
+        const response = await axios.post(`/api/cycles/${cycleId}/duplicate`, payload);
+
         // Add the duplicated cycle to the local store
-        this.cycles.unshift(response.cycle);
+        this.cycles.unshift(response.data.cycle);
         
         const toast = useToast();
         toast.success('Cycle duplicated successfully!');
         
-        return { success: true, cycle: response.cycle };
+        return { success: true, cycle: response.data.cycle };
       } catch (error) {
         this.error = error.response?.data?.error || 'Failed to duplicate cycle';
         
@@ -178,10 +183,11 @@ export const useCycleStore = defineStore('cycle', {
       this.error = null;
 
       try {
-        const response = await cycleAPI.getCycle(cycleId);
-        this.currentCycle = response.cycle;
+        const response = await axios.get(`/api/cycles/${cycleId}`);
+        this.currentCycle = response.data.cycle;
+        console.log('Loaded cycle:', this.currentCycle);
         
-        return { success: true, cycle: response.cycle };
+        return { success: true, cycle: response.data.cycle };
       } catch (error) {
         this.error = error.response?.data?.error || 'Failed to load cycle';
         

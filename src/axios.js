@@ -6,6 +6,10 @@ const toast = useToast();
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
+if (!apiUrl) {
+	throw new Error("VITE_API_URL is not defined in environment variables");
+}
+
 //setup base axios instance, with api url
 const axiosInstance = axios.create({
 	baseURL: apiUrl
@@ -25,7 +29,7 @@ axiosInstance.interceptors.request.use(config => {
 
 
 axiosInstance.interceptors.response.use(function (response) {
-	console.log(response.data)
+	// console.log(response.data)
 	if(response.data['message']){
 		// toast.success(response.data['message'])
 	}

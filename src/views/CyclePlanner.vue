@@ -151,10 +151,10 @@
 						</div>
 					</div>
 				</div>
-				<div class="buttons is-centered">
+				<!-- <div class="buttons is-centered">
 					<button class="button is-success" @click="onCycleSelect" :disabled="!selectedCycleId">Load</button>
 					<button class="button is-error" @click="saveLoadTab=''">Cancel</button>
-				</div>
+				</div> -->
 
 			</div>
 		</div>
@@ -522,6 +522,13 @@
 		</div>
 	</article>
 
+	<article class="panel is-primary">
+		<p class="panel-heading">Save Cycle</p>
+		<div class="panel-block">
+			<button @click="saveCycle" class="button is-primary">Save</button>
+		</div>
+	</article>
+
 	<article class="panel is-primary" v-if="selectedCycleId || cycle.title">
 		<p class="panel-heading">Summary</p>
 		<div class="panel-block">
@@ -629,12 +636,7 @@
 
 	</article>
 
-	<article class="panel is-primary">
-		<p class="panel-heading">Save Cycle</p>
-		<div class="panel-block">
-			<button @click="saveCycle" class="button is-primary">Save</button>
-		</div>
-	</article>
+	
 
 	<article class="panel is-primary">
 		<p class="panel-heading">Debugging</p>
@@ -985,13 +987,16 @@ export default {
 					title: this.newCycleName.trim(),
 					data: initialCycleData
 				})
+				console.log('Result:', result)
 				
 				if (result.success) {
-					// Set the selected cycle ID and load the cycle data
-					this.selectedCycleId = result.cycle.id
-					this.cycle = { ...result.cycle.data, id: result.cycle.id, title: result.cycle.title }
 					
-					// Save the new cycle ID to localStorage
+					
+					// Set the cycle data locally (don't change `selectedCycleId` to avoid triggering auto-load)
+					this.cycle = { ...result.cycle.data, id: result.cycle.id, title: result.cycle.title }
+					this.selectedCycleName = result.cycle.title
+					
+					// Save the new cycle ID to localStorage (for later auto-load)
 					localStorage.setItem('lastSelectedCycleId', result.cycle.id)
 					
 					// Clear the new cycle name and switch tabs
@@ -999,7 +1004,7 @@ export default {
 					this.saveLoadTab = ''
 					
 					// Reload the cycles list
-					await this.loadCycles()
+					// await this.loadCycles()
 					
 					toast.success("New Cycle Created! You can now add compounds to your cycle.")
 				}
@@ -1057,36 +1062,36 @@ export default {
 			// Get the last selected cycle ID from localStorage
 			const lastCycleId = localStorage.getItem('lastSelectedCycleId')
 			
-			console.log('Debug: lastSelectedCycleId from localStorage:', lastCycleId)
-			console.log('Debug: available cycles length:', this.cycles.length)
-			console.log('Debug: available cycles:', this.cycles)
-			
 			if (!lastCycleId) {
 				console.log('No last selected cycle found in localStorage')
 				return
 			}
-			
-			// Check if cycles are loaded
-			if (!this.cycles || this.cycles.length === 0) {
-				console.log('No cycles available yet, skipping auto-load')
+
+			console.log('Auto-loading last selected cycle ID:', lastCycleId)
+			const savedResult = await this.cycleStore.loadCycle(lastCycleId)
+
+			if (!savedResult || !savedResult.cycle) {
+				console.log(`Cycle with ID ${lastCycleId} not found`) 
 				return
 			}
-			
-			// Check if the cycle exists in the loaded cycles
-			const savedCycle = this.cycles.find(c => c.id === parseInt(lastCycleId))
-			
-			console.log('Debug: looking for cycle with id:', parseInt(lastCycleId))
-			console.log('Debug: found savedCycle:', savedCycle)
-			
-			if (savedCycle) {
-				console.log('Auto-loading last selected cycle:', savedCycle.title)
-				this.selectedCycleId = savedCycle.id
-				this.cycle = { ...savedCycle.cycle, id: savedCycle.id, title: savedCycle.title }
-				toast.success(`Auto-loaded cycle: ${savedCycle.title}`)
+
+			console.log('Auto-loaded cycle data (store result):', savedResult)
+
+			const fetched = savedResult.cycle
+
+			// Map the API cycle `data` into the component's expected shape
+			if (fetched.data) {
+				this.cycle = { ...fetched.data, id: fetched.id, title: fetched.title }
 			} else {
-				console.log('Last selected cycle not found in available cycles, clearing localStorage')
-				localStorage.removeItem('lastSelectedCycleId')
+				// Fallback if API returned a different shape
+				this.cycle = { ...fetched, id: fetched.id, title: fetched.title }
 			}
+
+			this.selectedCycleId = fetched.id
+			this.selectedCycleName = fetched.title
+			console.log('Cycle after auto-load:', this.cycle)
+			// toast.success(`Auto-loaded cycle: ${this.cycle.title}`)
+
 		},
 		async saveCycle() {
 			if (!this.authStore.isAuthenticated) {
@@ -1147,7 +1152,8 @@ export default {
 					// Load the cycle data
 					this.cycle = { ...cycleData.data, id: cycleData.id, title: cycleData.title }
 					this.selectedCycleName = cycleData.title
-					toast.success('Cycle loaded successfully!')
+					// toast.success('Cycle loaded successfully!')
+					this.saveLoadTab = ''
 				} else {
 					// Only show error if this was an explicit load attempt
 					if (this.explicitLoad) {
@@ -1405,7 +1411,7 @@ export default {
 
 		},
 		calculateWeeklymL(blockStart) {
-			console.log('calculateWeeklymL')
+			// console.log('calculateWeeklymL')
 			let totalBlockmL = 0
 
 			// Calculate cost for each compound with safety checks
@@ -1966,6 +1972,8 @@ export default {
 			hasToken: !!localStorage.getItem('auth_token'),
 			user: this.authStore.user
 		})
+
+		await this.loadLastSelectedCycle()
 		
 		// Load cycles if user is authenticated
 		if (this.authStore.isAuthenticated) {
@@ -1976,15 +1984,7 @@ export default {
 				// Wait for next tick and add a small delay to ensure reactivity has updated
 				await this.$nextTick()
 				
-				// Wait a bit more to ensure the API response has been processed
-				setTimeout(async () => {
-					console.log('Attempting auto-load after delay, cycles length:', this.cycles.length)
-					if (this.cycles.length > 0) {
-						await this.loadLastSelectedCycle()
-					} else {
-						console.log('Still no cycles after delay, skipping auto-load')
-					}
-				}, 100)
+				
 			} catch (error) {
 				console.error('Error during cycle loading:', error)
 			}

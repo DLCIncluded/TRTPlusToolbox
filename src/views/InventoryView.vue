@@ -548,7 +548,8 @@ export default {
 			}
 			
 			try {
-				const response = await this.$axios.get('/api/inventory/types')
+				const response = await this.$axios.get('http://localhost:5000/api/inventory/types')
+				console.log('Inventory types:', response.data)
 				if (response.data && response.data.types) {
 					this.types = response.data.types
 				} else {

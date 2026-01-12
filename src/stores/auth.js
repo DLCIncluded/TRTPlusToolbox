@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { authAPI } from '@/api';
+import axios from '@/axios';
 import { useToast } from 'vue-toastification';
 
 export const useAuthStore = defineStore('auth', {
@@ -50,10 +50,10 @@ export const useAuthStore = defineStore('auth', {
       this.error = null;
 
       try {
-        const response = await authAPI.login(credentials);
-        
-        this.accessToken = response.access_token;
-        this.user = response.user;
+        const response = await axios.post('/api/auth/login', credentials);
+
+        this.accessToken = response.data.access_token;
+        this.user = response.data.user;
         this.isAuthenticated = true;
 
         // Persist to localStorage
@@ -81,12 +81,12 @@ export const useAuthStore = defineStore('auth', {
       this.error = null;
 
       try {
-        const response = await authAPI.register(userData);
-        
+        const response = await axios.post('/api/auth/register', userData);
+
         const toast = useToast();
         toast.success('Registration successful! Please log in.');
-        
-        return { success: true, user: response.user };
+
+        return { success: true, user: response.data.user };
       } catch (error) {
         this.error = error.response?.data?.error || 'Registration failed';
         
@@ -106,7 +106,7 @@ export const useAuthStore = defineStore('auth', {
       try {
         // Notify server (if token is still valid)
         if (this.isAuthenticated) {
-          await authAPI.logout().catch(() => {
+          await axios.post('/api/auth/logout').catch(() => {
             // Ignore logout errors - clear local state anyway
           });
         }
@@ -132,8 +132,8 @@ export const useAuthStore = defineStore('auth', {
       }
 
       try {
-        const response = await authAPI.getCurrentUser();
-        this.user = response.user;
+        const response = await axios.get('/api/auth/me');
+        this.user = response.data.user;
         localStorage.setItem('auth_user', JSON.stringify(this.user));
         return true;
       } catch (error) {
@@ -160,11 +160,11 @@ export const useAuthStore = defineStore('auth', {
       this.error = null;
 
       try {
-        await authAPI.changePassword(passwordData);
-        
+        const response = await axios.post('/api/auth/change-password', passwordData);
+
         const toast = useToast();
-        toast.success('Password changed successfully');
-        
+        toast.success(response.data?.message || 'Password changed successfully');
+
         return { success: true };
       } catch (error) {
         this.error = error.response?.data?.error || 'Failed to change password';

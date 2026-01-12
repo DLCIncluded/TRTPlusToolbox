@@ -25,21 +25,21 @@
 				<li><RouterLink to="/" active-class="is-active">Home</RouterLink></li>
 				<li v-if="isLoggedIn"><RouterLink to="/dashboard" active-class="is-active">Dashboard</RouterLink></li>
 			</ul>
-			<p class="menu-label">Planner</p>
+			<p class="menu-label" v-if="isLoggedIn">Planner</p>
 			<ul class="menu-list">
 				<li v-if="isLoggedIn"><RouterLink to="/inventory" active-class="is-active">Inventory</RouterLink></li>
 				<li v-if="isLoggedIn"><RouterLink to="/cycleplanner" active-class="is-active">Cycle Planner</RouterLink></li>
 				<li v-if="isLoggedIn"><RouterLink to="/cyclecalendar" active-class="is-active">Cycle Calendar</RouterLink></li>
 			</ul>
-			<p class="menu-label">Tools</p>
-			<ul class="menu-list">
+			<p class="menu-label" v-if="isLoggedIn">Tools</p>
+			<ul class="menu-list" v-if="isLoggedIn">
 				<li><RouterLink to="/dosagecalc" active-class="is-active">Dosage Calculator</RouterLink></li>
 				<li><RouterLink to="/vialcalc" active-class="is-active">Weekly Vial Calculator</RouterLink></li>
 			</ul>
-			<p class="menu-label">Info</p>
+			<!-- <p class="menu-label">Info</p>
 			<ul class="menu-list">
 				<li><RouterLink to="/about" active-class="is-active">About</RouterLink></li>
-			</ul>
+			</ul> -->
 		</div>
 	</aside>
 </template>
