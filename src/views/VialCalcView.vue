@@ -1,8 +1,15 @@
 <template>
+
+		<article class="panel is-primary" v-if="vialItems.length > 0">
+		<p class="panel-heading">Weekly Vial Calculator</p>
+		<div class="panel-block">
+			<p>What is this? This is a tool to help calculate what you need to blend together for your weekly vial preparation.</p>
+		</div>
+		<div class="panel-block">
+			<p>This is used for making a blend for your week(s) of "medication" based on your specified doses and concentrations. It will also calculate your volume needed per shot based on doses selected.</p>
+		</div>
+	</article>
 	<div class="card">
-		<header class="card-header">
-			<p class="card-header-title">Vial Calculator</p>
-		</header>
 		<div class="card-content">
 			<div class="content fixed-grid has-1-cols-mobile has-5-cols-desktop">
 				<div class="grid">
