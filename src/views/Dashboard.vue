@@ -11,7 +11,7 @@
 				</figure> -->
 				<h1 class="title is-4 mt-4">Hello, {{ displayName }} 👋</h1>
 				<p class="subtitle is-6 has-text-grey mt-4">
-					Profile Coming Soon!
+					Dashboard Coming Soon!
 				</p>
 				<ul>
 					<!-- <li v-for="server in userStore.servers">{{ server.name }}</li> -->
@@ -27,7 +27,7 @@ import { mapStores } from 'pinia'
 import { useAuthStore } from '@/stores/auth'
 
 export default {
-  name: 'UserProfile',
+  name: 'UserDashboard',
 
   computed: {
     ...mapStores(useAuthStore),

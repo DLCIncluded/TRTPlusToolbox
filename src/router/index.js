@@ -41,7 +41,7 @@ const router = createRouter({
     {
       path: '/dashboard',
       name: 'dashboard',
-      component: () => import('../views/Profile.vue'),
+      component: () => import('../views/Dashboard.vue'),
       meta: { requiresAuth: true }
     },
     {
@@ -71,7 +71,7 @@ const router = createRouter({
     {
       path: '/settings',
       name: 'settings',
-      component: () => import('../views/Profile.vue'),
+      component: () => import('../views/Settings.vue'),
       meta: { requiresAuth: true }
     },
     {

@@ -36,10 +36,10 @@
 				<li><RouterLink to="/dosagecalc" active-class="is-active">Dosage Calculator</RouterLink></li>
 				<li><RouterLink to="/vialcalc" active-class="is-active">Weekly Vial Calculator</RouterLink></li>
 			</ul>
-			<!-- <p class="menu-label">Info</p>
+			<p class="menu-label">Info</p>
 			<ul class="menu-list">
 				<li><RouterLink to="/about" active-class="is-active">About</RouterLink></li>
-			</ul> -->
+			</ul>
 		</div>
 	</aside>
 </template>
