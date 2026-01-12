@@ -289,13 +289,16 @@
 
 	</div>
 	
-	<article class="panel is-primary" v-if="debugging==true">
+	<article class="panel is-primary" v-if="currentEnv == 'development'">
 		<p class="panel-heading">Debugging</p>
 		<div class="panel-block">
 			<!-- <div class="field">
 				<button @click="testAPI" class="button is-info">Test API Connection</button>
 			</div> -->
 			<pre>{{ vialItems }}</pre>
+			<!-- <pre>
+				{{ availableTypes }}
+			</pre> -->
 			
 
 		</div>
@@ -308,6 +311,7 @@
 		</div>
 	</article>
 
+
 </template>
 
 <script>
@@ -315,11 +319,12 @@ import { useAuthStore } from '@/stores/auth'
 import SyringeScale from '@/components/SyringeScale.vue';
 import { useToast } from "vue-toastification";
 const toast = useToast();
+const currentEnv = import.meta.env.VITE_ENV || 'development';
 
 export default {
 	data() {
 		return {
-			debugging: false,
+			currentEnv,
 			authStore: useAuthStore(),
 			types: [],
 			inventoryItems: [],
@@ -348,10 +353,15 @@ export default {
 	},
 
 	computed: {
+		// availableTypes() {
+		// 	return this.types.filter(type => {
+
+		// 		return !this.vialItems.some(item => item.type_id === type.id)
+		// 	})
+		// },
 		availableTypes() {
-			return this.types.filter(type => {
-				return !this.vialItems.some(item => item.type_id === type.id)
-			})
+			return this.types.filter(type => type.category === 'trt')
+			.filter(type => !this.vialItems.some(item => item.type_id === type.id))
 		},
 		selectedType() {
 			if (!this.newItem.type_id || !this.types.length) return null
