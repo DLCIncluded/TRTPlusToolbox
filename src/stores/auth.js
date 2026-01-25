@@ -54,6 +54,8 @@ export const useAuthStore = defineStore('auth', {
 
         // Check for error status codes that might not trigger catch block
         if (response.status !== 200) {
+          console.log("FUCK");
+          console.log('Login failed with status:', response.status);
           throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         }
 
