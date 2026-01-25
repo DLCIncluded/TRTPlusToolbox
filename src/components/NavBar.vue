@@ -11,7 +11,7 @@
 	</div>
 	
 	<aside class="navbar pl-3 menu" :class="{'is-open': showNav}">
-		<div class="menu-content" :class="{'mobile-hidden': !showNav}">
+		<div class="menu-content">
 			<p class="menu-label mt-5">{{ welcomeMessage }}</p>
 			<ul class="menu-list">
 				<li v-if="!isLoggedIn"><RouterLink to="/login" active-class="is-active">Login</RouterLink></li>
@@ -96,9 +96,8 @@ export default {
 	padding-top:1rem
 }
 
-/* Mobile burger button container */
+/* Burger button container - always visible */
 .mobile-burger-container {
-    display: none;
     position: fixed;
     top: 1rem;
     left: 1rem;
@@ -106,13 +105,17 @@ export default {
 	transition: transform 0.4s ease;
 }
 
-.desktop-burger {
-    display: none;
+/* Override Bulma's navbar-burger hiding on desktop */
+.navbar-burger {
+    display: block !important;
 }
 
-/* Menu overlay for mobile */
-.menu-overlay {
+/* .desktop-burger {
     display: none;
+} */
+
+/* Menu overlay - always functional */
+.menu-overlay {
     position: fixed;
     top: 0;
     left: 0;
@@ -120,33 +123,29 @@ export default {
     bottom: 0;
     background: rgba(0, 0, 0, 0.5);
     z-index: 25;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
 }
 
-/* Mobile styles */
-@media screen and (max-width: 1023px) {
-    .mobile-burger-container {
-        display: block;
-    }
-    
-    .menu-content.mobile-hidden {
-        display: none;
-    }
-	.mobile-burger-container.is-active {
-		transform: translateX(400%)
-	}
-    
-    .menu {
-        transform: translateX(-100%);
-        z-index: 30;
-    }
-    
-    .menu.is-open {
-        transform: translateX(0);
-    }
-    
-    .menu-overlay.is-active {
-        display: block;
-    }
+.menu-overlay.is-active {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Burger menu animation - always active */
+.mobile-burger-container.is-active {
+	transform: translateX(400%);
+}
+
+/* Menu always starts hidden and slides in when opened */
+.menu {
+    transform: translateX(-100%);
+    z-index: 30;
+}
+
+.menu.is-open {
+    transform: translateX(0);
 }
 
 

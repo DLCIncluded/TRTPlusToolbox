@@ -52,6 +52,20 @@ export const useAuthStore = defineStore('auth', {
       try {
         const response = await axios.post('/api/auth/login', credentials);
 
+        // Check for error status codes that might not trigger catch block
+        if (response.status !== 200) {
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+
+        if(response.data.error){
+          throw new Error(response.data.error);
+        }
+
+        // Validate required response fields before setting auth state
+        if (!response.data.access_token || !response.data.user) {
+          throw new Error('Invalid server response - missing authentication data');
+        }
+
         this.accessToken = response.data.access_token;
         this.user = response.data.user;
         this.isAuthenticated = true;
@@ -62,10 +76,22 @@ export const useAuthStore = defineStore('auth', {
 
         return { success: true };
       } catch (error) {
-        this.error = error.response?.data?.error || 'Login failed';
+        // Ensure auth state is cleared on any error
+        this.accessToken = null;
+        this.user = null;
+        this.isAuthenticated = false;
         
-        const toast = useToast();
-        toast.error(this.error);
+        // Handle different types of errors
+        if (error.response?.status === 429) {
+          this.error = 'Too many requests. Please try again later.';
+        } else if (error.message?.includes('HTTP 429')) {
+          this.error = 'Too many requests. Please try again later.';
+        } else {
+          this.error = error.response?.data?.error || error.error|| error.message || 'Login failed';
+        }
+        
+        // const toast = useToast();
+        // toast.error(this.error);
         
         return { success: false, error: this.error };
       } finally {
