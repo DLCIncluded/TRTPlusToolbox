@@ -7,6 +7,15 @@ const router = createRouter({
   routes: [
     {
       path: '/',
+      name: 'root',
+      beforeEnter: async (to, from, next) => {
+        const authStore = useAuthStore();
+        const  homePage = authStore.userHomePage;
+        next(homePage ? { name: homePage } : { name: 'home' });
+      },
+    },
+    {
+      path: '/home',
       name: 'home',
       component: HomeView,
       meta: { requiresAuth: false }

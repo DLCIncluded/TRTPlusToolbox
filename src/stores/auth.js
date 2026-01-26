@@ -8,13 +8,15 @@ export const useAuthStore = defineStore('auth', {
     accessToken: null,
     isAuthenticated: false,
     loading: false,
-    error: null
+    error: null,
+    userHomePage: null,
   }),
 
   getters: {
     welcomeMessage: (state) => `Welcome ${state.user?.username || 'Guest'}`,
     userId: (state) => state.user?.id || null,
     username: (state) => state.user?.username || null,
+    userHomePageGetter: (state) => state.userHomePage || 'home',
   },
 
   actions: {
@@ -30,7 +32,7 @@ export const useAuthStore = defineStore('auth', {
           this.accessToken = token;
           this.user = JSON.parse(user);
           this.isAuthenticated = true;
-          
+          this.userHomePage = localStorage.getItem('user_home_page') || 'home';
           // Verify token is still valid by fetching current user
           this.verifyAuth().catch(() => {
             this.logout();
@@ -75,6 +77,7 @@ export const useAuthStore = defineStore('auth', {
         // Persist to localStorage
         localStorage.setItem('auth_token', this.accessToken);
         localStorage.setItem('auth_user', JSON.stringify(this.user));
+        localStorage.setItem('user_home_page', this.userHomePage);
 
         return { success: true };
       } catch (error) {
@@ -178,6 +181,11 @@ export const useAuthStore = defineStore('auth', {
         this.user = { ...this.user, ...userData };
         localStorage.setItem('auth_user', JSON.stringify(this.user));
       }
+    },
+
+    updateUserHomePage(homePage) {
+      this.userHomePage = homePage;
+      localStorage.setItem('user_home_page', this.userHomePage);
     },
 
     /**

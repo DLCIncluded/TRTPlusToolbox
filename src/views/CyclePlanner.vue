@@ -247,7 +247,7 @@
 								<div class="control has-icons-right">
 									<input 
 										type="number" 
-										v-model="compoundData[compound.id].mg"
+										v-model="cycle.compoundData[compound.id].mg"
 										class="input no-spinner"
 										min="0"
 										@input="calculatehgh"
@@ -262,7 +262,7 @@
 								<div class="control has-icons-right">
 									<input 
 										type="number" 
-										v-model="compoundData[compound.id].ml" 
+										v-model="cycle.compoundData[compound.id].ml" 
 										class="input no-spinner"
 										min="0"
 										@input="calculatehgh"
@@ -277,7 +277,7 @@
 								<div class="control has-icons-left">
 									<input 
 										type="number" 
-										v-model="compoundData[compound.id].vialCost" 
+										v-model="cycle.compoundData[compound.id].vialCost" 
 										class="input no-spinner"
 										min="0"
 										@input="calculatehgh"
@@ -290,7 +290,7 @@
 							<div class="column is-half-desktop is-full-mobile">
 								<label class="label">Doses Per Week</label>
 								<select 
-									v-model="compoundData[compound.id].dosesPerWeek"
+									v-model="cycle.compoundData[compound.id].dosesPerWeek"
 									class="input"
 								>
 									<option value=1>1x/week aka "Every 7 days"</option>
@@ -300,10 +300,10 @@
 									<option value=7>7x/week aka "Every Day"</option>
 								</select>
 							</div>
-							<div class="column is-half-desktop is-full-mobile" v-if="compoundData[compound.id].dosesPerWeek == 1">
+							<div class="column is-half-desktop is-full-mobile" v-if="cycle.compoundData[compound.id].dosesPerWeek == 1">
 								<label class="label">Day For Injection</label>
 								<select 
-									v-model="compoundData[compound.id].injectionDay"
+									v-model="cycle.compoundData[compound.id].injectionDay"
 									class="input"
 								>
 									<option value=0>Sunday</option>
@@ -837,9 +837,14 @@ export default {
 						enoughVials = Math.floor(totalMl / (compound.id === 'hgh' ? this.cycle.compoundData[compound.id].ml : this.cycle.compoundData[compound.id].vialAmount)) >= vialsNeeded
 					}
 
-					
-					
-					vialsNeeded = (mlNeeded / 10) - (totalMl / 10) // assuming 10ml vials for calculation
+					if (compound.id === 'hgh'){
+						vialsNeeded = (mlNeeded / this.cycle.compoundData[compound.id].ml) - (totalMl / this.cycle.compoundData[compound.id].ml)
+					}
+					else {
+						// vialsNeeded = (mlNeeded / 10) - (totalMl / 10) // assuming 10ml vials for calculation
+						vialsNeeded = (mlNeeded / this.cycle.compoundData[compound.id].vialAmount) - (totalMl / this.cycle.compoundData[compound.id].vialAmount)
+						
+					}
 					vialsNeeded = Math.ceil(vialsNeeded)
 
 					console.log("Compound:", compound.id, "ML Needed:", mlNeeded, "Total ML in Inventory:", totalMl, "Vials Needed after inventory:", vialsNeeded, "In Inventory:", inInventory, "Enough Vials:", enoughVials);
@@ -848,10 +853,14 @@ export default {
 
 					if (!inInventory || !enoughVials) {
 						
+						let itemName = compound.name
+						if (compound.esterShort) {
+							itemName += ' ' + compound.esterShort
+						}
 
 						this.orderItems.push({
 							id: compound.id,
-							name: compound.name + ' ' + compound.esterShort,
+							name: itemName,
 							countToOrder: vialsNeeded,
 							cost: cost.toFixed(2)
 						})
@@ -1908,23 +1917,23 @@ export default {
 			
 			// console.log('calculatehgh')
 			
-			let concentrationmg = this.compoundData['hgh'].mg / this.compoundData['hgh'].ml
+			let concentrationmg = this.cycle.compoundData['hgh'].mg / this.cycle.compoundData['hgh'].ml
 			
-			let concentrationiu = (this.compoundData['hgh'].mg * 3) / this.compoundData['hgh'].ml
+			let concentrationiu = (this.cycle.compoundData['hgh'].mg * 3) / this.cycle.compoundData['hgh'].ml
 
-			let pentotaliu = concentrationiu * this.compoundData['hgh'].ml
-			let pentotalmg = concentrationmg * this.compoundData['hgh'].ml
+			let pentotaliu = concentrationiu * this.cycle.compoundData['hgh'].ml
+			let pentotalmg = concentrationmg * this.cycle.compoundData['hgh'].ml
 
-			if (this.compoundData['hgh'].isngenla){
+			if (this.cycle.compoundData['hgh'].isngenla){
 				pentotaliu = concentrationiu * 1.5 //account for the extra 0.3ml in the syringe
 				pentotalmg = concentrationmg * 1.5 
 			}
 
-			this.compoundData['hgh'].concentration = concentrationmg; 
-			this.compoundData['hgh'].concentrationiu = concentrationiu; 
+			this.cycle.compoundData['hgh'].concentration = concentrationmg; 
+			this.cycle.compoundData['hgh'].concentrationiu = concentrationiu; 
 
-			this.compoundData['hgh'].pentotaliu = pentotaliu;
-			this.compoundData['hgh'].pentotalmg = pentotalmg;
+			this.cycle.compoundData['hgh'].pentotaliu = pentotaliu;
+			this.cycle.compoundData['hgh'].pentotalmg = pentotalmg;
 			
 			// console.log(this.activeCompounds)
 		},
